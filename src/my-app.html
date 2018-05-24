@@ -93,10 +93,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 border: 3px solid #78909c;
                 margin-left: 25%;
                 margin-right: 25%;
-                margin-top:  10%;
+                margin-top: 10%;
             }
 
-            .button-login  {
+            .button-login {
                 background-color: #4CAF50;
                 color: white;
                 padding: 14px 20px;
@@ -105,9 +105,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 cursor: pointer;
                 width: 100%;
             }
+
             button-login:hover {
                 opacity: 0.8;
             }
+
             .imgcontainer {
                 text-align: center;
                 margin: 24px 0 12px 0;
@@ -136,7 +138,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 data="{{routeData}}">
         </app-route>
 
-        <div class="signIn" hidden$="[[player]]">
+        <div class="signIn" hidden$="[[player.uid]]">
             <form>
 
                 <div class="imgcontainer">
@@ -149,20 +151,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                     <paper-input label="Initial balance" value="{{newPlayer.balance}}"></paper-input>
 
-                    <paper-input label="Photo Profile" value="{{newPlayer.balance}}"></paper-input>
+                    <paper-input label="Photo Profile" value="{{newPlayer.photo}}"></paper-input>
 
-                    <paper-button on-tap="" class="button-login">Start game</paper-button>
+                    <paper-button on-click="login" class="button-login">Start game</paper-button>
 
                 </div>
             </form>
         </div>
 
-        <div class="container" hidden$="[[!player]]">
+        <div class="container" hidden$="[[!player.uid]]">
             <app-drawer-layout fullbleed narrow="{{narrow}}">
                 <!-- Drawer content -->
                 <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
                     <div class="profile">
-                        <img src="../images/user.png" alt="Player">
+                        <img src="[[player.photo]]" alt="Player">
                         <app-toolbar>
                             [[player.name]]
                         </app-toolbar>
@@ -180,7 +182,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <div>Transactions</div>
                             </app-toolbar>
                         </a>
-                        <a href="#">
+                        <a href="#" on-click="logout">
                             <app-toolbar>
                                 <paper-icon-button class="menu" icon="other-icons:close"></paper-icon-button>
                                 <div>Logout</div>
@@ -394,28 +396,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     player: {
                         type: Object,
                         value: {
-                            name: 'Bank',
-                            balance: 1000,
-                            transactions: [
-                                {
-                                    type: 'CHARGE',
-                                    amount: 1000,
-                                    player: 'team1',
-                                    time: new Date()
-                                },
-                                {
-                                    type: 'DEPOSIT',
-                                    amount: 1000,
-                                    player: 'team2',
-                                    time: new Date()
-                                }]
+                            transactions: []
                         }
                     },
                     newPlayer: {
                         type: Object,
                         value: {
                             name: '',
-                            balance: ''
+                            balance: '',
+                            photo: ''
                         }
                     },
                     players: {
@@ -433,64 +422,80 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             connectedCallback() {
                 super.connectedCallback();
-                const players = database.ref('title_deeds/');
+                const players = database.ref('players/');
                 players.on('value', (snapshot) => {
-                    // this.push('players', snapshot.val());
+                    this.push('players', snapshot.val());
                 });
 
 
             }
 
-            createPlayer(name, initialBalance, imageUrl) {
-                const iud = database.ref().child('players').push().key;
+            login() {
+                let name, balance, photo;
+                name = this.newPlayer.name;
+                balance = this.newPlayer.balance;
+                photo = this.newPlayer.photo;
+
+                const uid = database.ref().child('players').push().key;
                 const newPlayer = {
-                    iud,
+                    uid,
                     name,
-                    balance: initialBalance,
+                    balance,
                     transactions: {},
                     title_deeds: {
-                        "-LDJ23lSlGbdMKnztCYV": true,
-                        "-LDJ23lVVwdeLjVhMX8O": true,
-                        "-LDJ23lVVwdeLjVhMX8P": true,
-                        "-LDJ23lVVwdeLjVhMX8Q": true,
-                        "-LDJ23lVVwdeLjVhMX8R": true,
-                        "-LDJ23lVVwdeLjVhMX8S": true,
-                        "-LDJ23lXysGh-apFxemQ": true,
-                        "-LDJ23lXysGh-apFxemR": true,
-                        "-LDJ23lXysGh-apFxemS": true,
-                        "-LDJ23lXysGh-apFxemT": true,
-                        "-LDJ23lXysGh-apFxemU": true,
-                        "-LDJ23lXysGh-apFxemV": true,
-                        "-LDJ23lXysGh-apFxemW": true,
-                        "-LDJ23lXysGh-apFxemX": true,
-                        "-LDJ23lXysGh-apFxemY": true,
-                        "-LDJ23lYcnMaYwxJkHiN": true,
-                        "-LDJ23lYcnMaYwxJkHiO": true,
-                        "-LDJ23lYcnMaYwxJkHiP": true,
-                        "-LDJ23lYcnMaYwxJkHiQ": true,
-                        "-LDJ23lYcnMaYwxJkHiR": true,
-                        "-LDJ23lYcnMaYwxJkHiS": true,
-                        "-LDJ23lYcnMaYwxJkHiT": true,
-                        "-LDJ23lYcnMaYwxJkHiU": true,
-                        "-LDJ23lZgH9wG-Z-pd9Q": true,
-                        "-LDJ23lZgH9wG-Z-pd9R": true,
-                        "-LDJ23lZgH9wG-Z-pd9S": true,
-                        "-LDJ23lZgH9wG-Z-pd9T": true,
-                        "-LDJ23lZgH9wG-Z-pd9U": true,
-                        "-LDJ23lZgH9wG-Z-pd9V": true,
-                        "-LDJ23lZgH9wG-Z-pd9W": true
+                        "-LDJ23lSlGbdMKnztCYV": false,
+                        "-LDJ23lVVwdeLjVhMX8O": false,
+                        "-LDJ23lVVwdeLjVhMX8P": false,
+                        "-LDJ23lVVwdeLjVhMX8Q": false,
+                        "-LDJ23lVVwdeLjVhMX8R": false,
+                        "-LDJ23lVVwdeLjVhMX8S": false,
+                        "-LDJ23lXysGh-apFxemQ": false,
+                        "-LDJ23lXysGh-apFxemR": false,
+                        "-LDJ23lXysGh-apFxemS": false,
+                        "-LDJ23lXysGh-apFxemT": false,
+                        "-LDJ23lXysGh-apFxemU": false,
+                        "-LDJ23lXysGh-apFxemV": false,
+                        "-LDJ23lXysGh-apFxemW": false,
+                        "-LDJ23lXysGh-apFxemX": false,
+                        "-LDJ23lXysGh-apFxemY": false,
+                        "-LDJ23lYcnMaYwxJkHiN": false,
+                        "-LDJ23lYcnMaYwxJkHiO": false,
+                        "-LDJ23lYcnMaYwxJkHiP": false,
+                        "-LDJ23lYcnMaYwxJkHiQ": false,
+                        "-LDJ23lYcnMaYwxJkHiR": false,
+                        "-LDJ23lYcnMaYwxJkHiS": false,
+                        "-LDJ23lYcnMaYwxJkHiT": false,
+                        "-LDJ23lYcnMaYwxJkHiU": false,
+                        "-LDJ23lZgH9wG-Z-pd9Q": false,
+                        "-LDJ23lZgH9wG-Z-pd9R": false,
+                        "-LDJ23lZgH9wG-Z-pd9S": false,
+                        "-LDJ23lZgH9wG-Z-pd9T": false,
+                        "-LDJ23lZgH9wG-Z-pd9U": false,
+                        "-LDJ23lZgH9wG-Z-pd9V": false,
+                        "-LDJ23lZgH9wG-Z-pd9W": false
                     },
-                    photo: imageUrl
+                    photo
                 };
 
-                if (this._existPlayer(newPlayer.name) === true) {
-                    this.set('player', newPlayer);
-                } else {
+                if (this._existPlayer(newPlayer.name) !== true) {
                     database
-                        .ref('players/' + iud)
+                        .ref('players/' + uid)
                         .set(newPlayer);
+                    this.set('player', newPlayer);
                 }
+            }
 
+            getUser(uid) {
+                const players = database.ref('players/' + uid);
+                players.once('value', (snapshot) => {
+                    this.set('player', snapshot.val());
+                });
+            }
+
+            logout() {
+                this.set('player', {
+                    transactions: []
+                });
             }
 
             _routePageChanged(page) {
@@ -520,9 +525,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             _existPlayer(name) {
                 let exist = false;
-                for (const player of this.players) {
-                    if (player.name === name) {
+                const players = this.players[0];
+                for (const uid in players) {
+                    if (players[uid].name === name) {
                         exist = true;
+                        this.getUser(uid);
                     }
                 }
                 return exist;

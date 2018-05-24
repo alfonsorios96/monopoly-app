@@ -110,9 +110,7 @@
                     },
                     player: {
                         type: Object,
-                        value: {
-                            transactions: []
-                        },
+                        value: {},
                         observer: '_handlerTable'
                     },
                     table: {
@@ -137,7 +135,7 @@
             _handlerTable() {
                 const headers = ['Type', 'User', 'Amount', 'Date'];
                 const rows = [];
-                for (const transaction of this.player.transactions) {
+                for (const transaction in this.player.transactions) {
                     const row = {
                         title: transaction.time,
                         cells: [transaction.type, transaction.player, transaction.amount, transaction.time]
