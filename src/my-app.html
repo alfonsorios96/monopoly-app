@@ -344,7 +344,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     },
                     player: {
                         type: Object,
-                        value: null
+                        value: {
+                            name: 'Bank',
+                            balance: 1000,
+                            transactions: [
+                                {
+                                    type: 'CHARGE',
+                                    amount: 1000,
+                                    player: 'team1',
+                                    time: new Date()
+                                },
+                                {
+                                    type: 'DEPOSIT',
+                                    amount: 1000,
+                                    player: 'team2',
+                                    time: new Date()
+                                }]
+                        }
                     },
                     newPlayer: {
                         type: Object,
@@ -368,18 +384,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             connectedCallback() {
                 super.connectedCallback();
-                const players = database.ref('players/');
+                const players = database.ref('title_deeds/');
                 players.on('value', (snapshot) => {
-                    this.push('players', snapshot.val());
+                    // this.push('players', snapshot.val());
                 });
+
+
             }
 
-            createPlayer(userId, name, initialBalance, imageUrl) {
+            createPlayer(name, initialBalance, imageUrl) {
+                const iud = database.ref().child('players').push().key;
                 const newPlayer = {
+                    iud,
                     name,
                     balance: initialBalance,
-                    transactions: [],
-                    title_deeds: [],
+                    transactions: {},
+                    title_deeds: {
+                        "-LDJ23lSlGbdMKnztCYV": true,
+                        "-LDJ23lVVwdeLjVhMX8O": true,
+                        "-LDJ23lVVwdeLjVhMX8P": true,
+                        "-LDJ23lVVwdeLjVhMX8Q": true,
+                        "-LDJ23lVVwdeLjVhMX8R": true,
+                        "-LDJ23lVVwdeLjVhMX8S": true,
+                        "-LDJ23lXysGh-apFxemQ": true,
+                        "-LDJ23lXysGh-apFxemR": true,
+                        "-LDJ23lXysGh-apFxemS": true,
+                        "-LDJ23lXysGh-apFxemT": true,
+                        "-LDJ23lXysGh-apFxemU": true,
+                        "-LDJ23lXysGh-apFxemV": true,
+                        "-LDJ23lXysGh-apFxemW": true,
+                        "-LDJ23lXysGh-apFxemX": true,
+                        "-LDJ23lXysGh-apFxemY": true,
+                        "-LDJ23lYcnMaYwxJkHiN": true,
+                        "-LDJ23lYcnMaYwxJkHiO": true,
+                        "-LDJ23lYcnMaYwxJkHiP": true,
+                        "-LDJ23lYcnMaYwxJkHiQ": true,
+                        "-LDJ23lYcnMaYwxJkHiR": true,
+                        "-LDJ23lYcnMaYwxJkHiS": true,
+                        "-LDJ23lYcnMaYwxJkHiT": true,
+                        "-LDJ23lYcnMaYwxJkHiU": true,
+                        "-LDJ23lZgH9wG-Z-pd9Q": true,
+                        "-LDJ23lZgH9wG-Z-pd9R": true,
+                        "-LDJ23lZgH9wG-Z-pd9S": true,
+                        "-LDJ23lZgH9wG-Z-pd9T": true,
+                        "-LDJ23lZgH9wG-Z-pd9U": true,
+                        "-LDJ23lZgH9wG-Z-pd9V": true,
+                        "-LDJ23lZgH9wG-Z-pd9W": true
+                    },
                     photo: imageUrl
                 };
 
@@ -387,7 +438,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     this.set('player', newPlayer);
                 } else {
                     database
-                        .ref('players/' + userId)
+                        .ref('players/' + iud)
                         .set(newPlayer);
                 }
 
