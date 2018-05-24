@@ -19,6 +19,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="monopoly-icons.html">
 
@@ -100,6 +102,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <div class="signIn" hidden$="[[player]]">
             <h2>SignIn</h2>
+
+            <paper-input label="Player name" value="{{newPlayer.name}}"></paper-input>
+            <paper-input label="Initial balance" value="{{newPlayer.balance}}"></paper-input>
+            <paper-button on-tap="">Start game</paper-button>
         </div>
 
         <div class="container" hidden$="[[!player]]">
@@ -338,23 +344,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     },
                     player: {
                         type: Object,
+                        value: null
+                    },
+                    newPlayer: {
+                        type: Object,
                         value: {
-                            name: 'Bank',
-                            balance: 1000,
-                            transactions: [
-                                {
-                                    type: 'CHARGE',
-                                    amount: 1000,
-                                    player: 'team1',
-                                    time: new Date()
-                                },
-                                {
-                                    type: 'DEPOSIT',
-                                    amount: 1000,
-                                    player: 'team2',
-                                    time: new Date()
-                                }]
+                            name: '',
+                            balance: ''
                         }
+                    },
+                    players: {
+                        type: Array,
+                        value: []
                     }
                 };
             }
@@ -363,6 +364,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 return [
                     '_routePageChanged(routeData.page)',
                 ];
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                const players = database.ref('players/');
+                players.on('value', (snapshot) => {
+                    this.push('players', snapshot.val());
+                });
+            }
+
+            createPlayer(userId, name, initialBalance, imageUrl) {
+                const newPlayer = {
+                    name,
+                    balance: initialBalance,
+                    transactions: [],
+                    title_deeds: [],
+                    photo: imageUrl
+                };
+
+                if (this._existPlayer(newPlayer.name) === true) {
+                    this.set('player', newPlayer);
+                } else {
+                    database
+                        .ref('players/' + userId)
+                        .set(newPlayer);
+                }
+
             }
 
             _routePageChanged(page) {
@@ -388,6 +416,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             _showPage404() {
                 this.page = 'view404';
+            }
+
+            _existPlayer(name) {
+                let exist = false;
+                for (const player of this.players) {
+                    if (player.name === name) {
+                        exist = true;
+                    }
+                }
+                return exist;
             }
         }
 

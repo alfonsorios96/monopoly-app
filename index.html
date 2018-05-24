@@ -60,18 +60,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="msapplication-tap-highlight" content="no">
 
     <script>
-      /**
-      * [polymer-root-path]
-      *
-      * By default, we set `Polymer.rootPath` to the server root path (`/`).
-      * Leave this line unchanged if you intend to serve your app from the root
-      * path (e.g., with URLs like `my.domain/` and `my.domain/view1`).
-      *
-      * If you intend to serve your app from a non-root path (e.g., with URLs
-      * like `my.domain/my-app/` and `my.domain/my-app/view1`), edit this line
-      * to indicate the path from which you'll be serving, including leading
-      * and trailing slashes (e.g., `/my-app/`).
-      */
       window.Polymer = {rootPath: '/'};
 
       // Load and register pre-caching Service Worker
@@ -82,6 +70,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         });
       }
+    </script>
+
+
+    <script src="https://www.gstatic.com/firebasejs/5.0.3/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        const config = {
+            apiKey: "AIzaSyBfhbt1f3GsOx5eMYsw20cKTt2PMtsifGI",
+            authDomain: "monopoly-fe174.firebaseapp.com",
+            databaseURL: "https://monopoly-fe174.firebaseio.com",
+            projectId: "monopoly-fe174",
+            storageBucket: "monopoly-fe174.appspot.com",
+            messagingSenderId: "60059948599"
+        };
+        firebase.initializeApp(config);
+        const database = firebase.database();
     </script>
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
