@@ -31,7 +31,13 @@
                 max-width: 90%;
                 width: 90%;
             }
-
+            .paper-card__flags{
+                margin-top: 15px;
+                margin-left: 5%;
+                margin-right: 5%;
+                max-width: 90%;
+                width: 20%;
+            }
             responsive-table {
                 padding: 5px;
                 --responsive-table-list-row-even-bg-color: transparent;
@@ -58,6 +64,7 @@
                 --responsive-table-grid-row-even-border-bottom: solid 1px #807F7F;
                 --responsive-table-grid-row-odd-border-bottom: solid 1px #807F7F;
             }
+
         </style>
         <paper-card>
             <div class="card-content">
@@ -84,13 +91,13 @@
                     </responsive-table>
                 </iron-collapse>
                 <iron-collapse id="deeds">
-                    <iron-list items="[[deeds]]" as="deed">
-                        <template>
-                            <div>
-                                <paper-item>[[deed.name]]</paper-item>
+                    <template is="dom-repeat" items="[[deeds]]" as="deed" >
+                        <paper-card class="paper-card__flags" image="[[deed.image]]" alt="flag">
+                            <div class="card-content">
+                                [[deed.name]]
                             </div>
-                        </template>
-                    </iron-list>
+                        </paper-card>
+                    </template>
                 </iron-collapse>
             </div>
         </paper-card>
