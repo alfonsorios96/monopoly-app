@@ -1,0 +1,81 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view2">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                padding: 10px;
+            }
+
+            paper-button.indigo {
+                background-color: var(--paper-green-500);
+                color: white;
+                --paper-button-raised-keyboard-focus: {
+                    background-color: var(--paper-pink-a200) !important;
+                    color: white !important;
+                };
+            }
+
+            paper-button.indigo:hover {
+                background-color: var(--paper-green-400);
+            }
+
+            paper-input {
+                width: 150px;
+            }
+
+            .operation {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        </style>
+
+        <div class="card">
+            <h2>Title deeds</h2>
+            <div class="operation">
+                <paper-dropdown-menu label="Title Deeds" no-animations="true" on-value-changed="">
+                    <paper-listbox slot="dropdown-content">
+                        <paper-item class="item">Option</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu label="Players" no-animations="true" on-value-changed="">
+                    <paper-listbox slot="dropdown-content">
+                        <paper-item class="item">Team1</paper-item>
+                        <paper-item class="item">Team2</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-button class="indigo">Make transaction</paper-button>
+            </div>
+            <h2>Accounts transfer</h2>
+            <div class="operation">
+                <paper-input label="Amount to transfer"></paper-input>
+                <paper-dropdown-menu label="Players" no-animations="true" on-value-changed="">
+                    <paper-listbox slot="dropdown-content">
+                        <paper-item class="item">Team1</paper-item>
+                        <paper-item class="item">Team2</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-button class="indigo">Make transaction</paper-button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        class MyView2 extends Polymer.Element {
+            static get is() {
+                return 'my-view2';
+            }
+        }
+
+        window.customElements.define(MyView2.is, MyView2);
+    </script>
+</dom-module>

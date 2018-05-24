@@ -1,0 +1,396 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="monopoly-icons.html">
+
+<link rel="lazy-import" href="dashboard.html">
+<link rel="lazy-import" href="transactions.html">
+<link rel="lazy-import" href="my-view404.html">
+
+<dom-module id="my-app">
+    <template>
+        <style>
+            :host {
+                --app-primary-color: #4285f4;
+                --app-secondary-color: black;
+
+                display: block;
+            }
+
+            app-drawer-layout:not([narrow]) [drawer-toggle] {
+                display: none;
+            }
+
+            app-header {
+                color: #fff;
+                background-color: var(--app-primary-color);
+            }
+
+            app-header paper-icon-button {
+                --paper-icon-button-ink-color: white;
+            }
+
+            paper-icon-button .menu {
+                --paper-icon-button-ink-color: black;
+            }
+
+            .drawer-list {
+                margin: 0 20px;
+            }
+
+            .drawer-list a {
+                display: block;
+                padding: 0 16px;
+                text-decoration: none;
+                color: var(--app-secondary-color);
+                line-height: 40px;
+            }
+
+            .drawer-list a.iron-selected {
+                color: black;
+                font-weight: bold;
+            }
+
+            .profile {
+                width: 100%;
+                height: 250px;
+                display: flex;
+                flex-direction: column;
+                padding-top: 10px;
+                align-content: center;
+                align-items: center;
+            }
+
+            .profile img {
+                width: 140px;
+                height: 140px;
+                border-radius: 50%;
+            }
+        </style>
+
+        <app-location
+                route="{{route}}"
+                url-space-regex="^[[rootPath]]">
+        </app-location>
+
+        <app-route
+                route="{{route}}"
+                pattern="[[rootPath]]:page"
+                data="{{routeData}}">
+        </app-route>
+
+        <div class="signIn" hidden$="[[player]]">
+            <h2>SignIn</h2>
+        </div>
+
+        <div class="container" hidden$="[[!player]]">
+            <app-drawer-layout fullbleed narrow="{{narrow}}">
+                <!-- Drawer content -->
+                <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
+                    <div class="profile">
+                        <img src="../images/user.png" alt="Player">
+                        <app-toolbar>
+                            [[player.name]]
+                        </app-toolbar>
+                    </div>
+                    <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                        <a name="dashboard" href="[[rootPath]]dashboard">
+                            <app-toolbar>
+                                <paper-icon-button class="menu" icon="monopoly-icons:dashboard"></paper-icon-button>
+                                <div>Dashboard</div>
+                            </app-toolbar>
+                        </a>
+                        <a name="transactions" href="[[rootPath]]transactions">
+                            <app-toolbar>
+                                <paper-icon-button class="menu" icon="monopoly-icons:transactions"></paper-icon-button>
+                                <div>Transactions</div>
+                            </app-toolbar>
+                        </a>
+                        <a href="#">
+                            <app-toolbar>
+                                <paper-icon-button class="menu" icon="other-icons:close"></paper-icon-button>
+                                <div>Logout</div>
+                            </app-toolbar>
+                        </a>
+                    </iron-selector>
+                </app-drawer>
+
+                <!-- Main content -->
+                <app-header-layout has-scrolling-region>
+
+                    <app-header slot="header" condenses reveals effects="waterfall">
+                        <app-toolbar>
+                            <paper-icon-button icon="polymer-icons:menu" drawer-toggle></paper-icon-button>
+                            <div main-title>Monopoly</div>
+                        </app-toolbar>
+                    </app-header>
+
+                    <iron-pages
+                            selected="[[page]]"
+                            attr-for-selected="name"
+                            fallback-selection="view404"
+                            role="main">
+                        <my-view1 name="dashboard" deeds="[[deeds]]" player="[[player]]"></my-view1>
+                        <my-view2 name="transactions"></my-view2>
+                        <my-view404 name="view404"></my-view404>
+                    </iron-pages>
+                </app-header-layout>
+
+
+            </app-drawer-layout>
+        </div>
+    </template>
+
+    <script>
+        // Gesture events like tap and track generated from touch will not be
+        // preventable, allowing for better scrolling performance.
+        Polymer.setPassiveTouchGestures(true);
+
+        class MyApp extends Polymer.Element {
+            static get is() {
+                return 'my-app';
+            }
+
+            static get properties() {
+                return {
+                    page: {
+                        type: String,
+                        reflectToAttribute: true,
+                        observer: '_pageChanged',
+                    },
+                    routeData: Object,
+                    subroute: Object,
+                    // This shouldn't be neccessary, but the Analyzer isn't picking up
+                    // Polymer.Element#rootPath
+                    rootPath: String,
+                    deeds: {
+                        type: Array,
+                        value: [
+                            {
+                                name: 'México',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Estados Unidos',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Canadá',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Argentina',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Brazil',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Chile',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Costa Rica',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Guatemala',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Panamá',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Colombia',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Venezuela',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Perú',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'España',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Francia',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Inglaterra',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Italia',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Suiza',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Alemania',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Marruecos',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Egipto',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Sudáfrica',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Rusia',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'China',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Japón',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Aerolínea Afroasiática',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Aerolínea Norteamericana',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Aerolínea Sudamericana',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Aerolínea Europea',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Embajada',
+                                image: '../images/.png',
+                                player: 'bank'
+                            },
+                            {
+                                name: 'Consulado',
+                                image: '../images/.png',
+                                player: 'bank'
+                            }]
+                    },
+                    player: {
+                        type: Object,
+                        value: {
+                            name: 'Bank',
+                            balance: 1000,
+                            transactions: [
+                                {
+                                    type: 'CHARGE',
+                                    amount: 1000,
+                                    player: 'team1',
+                                    time: new Date()
+                                },
+                                {
+                                    type: 'DEPOSIT',
+                                    amount: 1000,
+                                    player: 'team2',
+                                    time: new Date()
+                                }]
+                        }
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_routePageChanged(routeData.page)',
+                ];
+            }
+
+            _routePageChanged(page) {
+                // If no page was found in the route data, page will be an empty string.
+                // Default to 'view1' in that case.
+                this.page = page || 'dashboard';
+
+                // Close a non-persistent drawer when the page & route are changed.
+                if (!this.$.drawer.persistent) {
+                    this.$.drawer.close();
+                }
+            }
+
+            _pageChanged(page) {
+                // Load page import on demand. Show 404 page if fails
+                const resolvedPageUrl = this.resolveUrl(page + '.html');
+                Polymer.importHref(
+                    resolvedPageUrl,
+                    null,
+                    this._showPage404.bind(this),
+                    true);
+            }
+
+            _showPage404() {
+                this.page = 'view404';
+            }
+        }
+
+        window.customElements.define(MyApp.is, MyApp);
+    </script>
+</dom-module>

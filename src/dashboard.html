@@ -1,0 +1,155 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="responsive-table.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view1">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                padding: 10px;
+            }
+
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            paper-card {
+                margin-top: 10px;
+                margin-left: 5%;
+                margin-right: 5%;
+                max-width: 90%;
+                width: 90%;
+            }
+
+            responsive-table {
+                padding: 5px;
+                --responsive-table-list-row-even-bg-color: transparent;
+                --responsive-table-list-row-odd-bg-color: transparent;
+                --responsive-table-grid-row-even-bg-color: transparent;
+                --responsive-table-grid-row-odd-bg-color: transparent;
+                --responsive-table-grid-header-bg-color: transparent;
+                --responsive-table-grid-header-border-bottom: solid 3px #807F7F;
+                --responsive-table-accordion-border-top: none;
+                --responsive-table-accordion-border-bottom: solid 3px #807F7F;
+                --responsive-table-accordion-border-left: none;
+                --responsive-table-accordion-border-right: none;
+                --responsive-table-accordion-bg-color: white;
+                --responsive-table-accordion-color: #807F7F;
+                --responsive-table-list-border-left: none;
+                --responsive-table-list-border-right: none;
+                --responsive-table-list-border-top: none;
+                --responsive-table-list-border-bottom: none;
+                --responsive-table-accordion-border-radius: 0;
+                --responsive-table-grid-border-left: none;
+                --responsive-table-grid-border-right: none;
+                --responsive-table-grid-border-top: none;
+                --responsive-table-grid-border-bottom: none;
+                --responsive-table-grid-row-even-border-bottom: solid 1px #807F7F;
+                --responsive-table-grid-row-odd-border-bottom: solid 1px #807F7F;
+            }
+        </style>
+        <paper-card>
+            <div class="card-content">
+                <h2>
+                    Balance: $ [[player.balance]] MXN
+                </h2>
+            </div>
+            <div class="card-actions">
+                <div class="horizontal justified">
+                    <paper-button id="transactionButton" on-click="toggleTransaction">
+                        Record transactions
+                    </paper-button>
+                    <paper-button id="titlesButton" on-click="toggleTitles">
+                        Title Deeds
+                    </paper-button>
+                </div>
+            </div>
+
+            <div class="card-detail">
+                <iron-collapse id="transactions">
+                    <responsive-table id="table"
+                                      headers="[[table.headers]]"
+                                      rows="[[table.rows]]">
+                    </responsive-table>
+                </iron-collapse>
+                <iron-collapse id="deeds">
+                    <iron-list items="[[deeds]]" as="deed">
+                        <template>
+                            <div>
+                                <paper-item>[[deed.name]]</paper-item>
+                            </div>
+                        </template>
+                    </iron-list>
+                </iron-collapse>
+            </div>
+        </paper-card>
+    </template>
+
+    <script>
+        class MyView1 extends Polymer.Element {
+            static get is() {
+                return 'my-view1';
+            }
+
+            static get properties() {
+                return {
+                    deeds: {
+                        type: Array,
+                        value: []
+                    },
+                    player: {
+                        type: Object,
+                        value: {
+                            transactions: []
+                        },
+                        observer: '_handlerTable'
+                    },
+                    table: {
+                        type: Object,
+                        value: {}
+                    }
+                };
+            }
+
+            toggleTransaction() {
+                this.$.transactions.toggle();
+                this.$.transactionButton.setAttribute('aria-expanded', this.$.transactions.opened);
+                this.$.titlesButton.setAttribute('aria-expanded', this.$.deeds.opened);
+            }
+
+            toggleTitles() {
+                this.$.deeds.toggle();
+                this.$.transactionButton.setAttribute('aria-expanded', this.$.transactions.opened);
+                this.$.titlesButton.setAttribute('aria-expanded', this.$.deeds.opened);
+            }
+
+            _handlerTable() {
+                const headers = ['Type', 'User', 'Amount', 'Date'];
+                const rows = [];
+                for (const transaction of this.player.transactions) {
+                    const row = {
+                        title: transaction.time,
+                        cells: [transaction.type, transaction.player, transaction.amount, transaction.time]
+                    };
+                    rows.push(row);
+                }
+                this.set('table', {
+                    headers, rows
+                });
+            }
+        }
+
+        window.customElements.define(MyView1.is, MyView1);
+    </script>
+</dom-module>

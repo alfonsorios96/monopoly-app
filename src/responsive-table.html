@@ -1,0 +1,342 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="responsive-table">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                box-sizing: border-box;
+                font-family: var(--fontDefault, sans-serif);
+                @apply --responsive-table; }
+
+            :host([hidden]), [hidden] {
+                display: none !important; }
+
+            *, *:before, *:after {
+                box-sizing: inherit; }
+
+            /* Page styling
+            ================================== */
+            .Table {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: column nowrap;
+                -ms-flex-flow: column nowrap;
+                flex-flow: column nowrap;
+                -webkit-box-pack: justify;
+                -ms-flex-pack: justify;
+                -webkit-justify-content: space-between;
+                justify-content: space-between;
+                line-height: 1.5;
+                background: var(--responsive-table-list-bg-color, transparent);
+                border-left: var(--responsive-table-list-border-left, 1px solid #f2f2f2);
+                border-right: var(--responsive-table-list-border-right, 1px solid #f2f2f2);
+                border-top: var(--responsive-table-list-border-top, 1px solid #f2f2f2);
+                border-bottom: var(--responsive-table-list-border-bottom, 1px solid #f2f2f2);
+                font-size: var(--responsive-table-list-font-size, 1rem);
+                font-family: var(--responsive-table-list-font-family, sans-serif);
+                margin: var(--responsive-table-list-margin, 0.5rem);
+                padding: var(--responsive-table-list-padding, 0); }
+
+            .Table-header {
+                display: none; }
+
+            .Table-row {
+                width: 100%; }
+
+            .Table-row:nth-of-type(even) {
+                background: var(--responsive-table-list-row-even-bg-color, #f2f2f2);
+                border-left: var(--responsive-table-list-row-even-border-left, none);
+                border-right: var(--responsive-table-list-row-even-border-right, none);
+                border-top: var(--responsive-table-row-list-even-border-top, 1px none);
+                border-bottom: var(--responsive-table-list-row-even-border-bottom, none);
+                font-size: var(--responsive-table-list-row-even-font-size, 1rem);
+                font-family: var(--responsive-table-list-row-even-font-family, sans-serif);
+                margin: var(--responsive-table-list-row-even-margin, 0);
+                padding: var(--responsive-table-list-row-even-padding, 0); }
+
+            .Table-row:nth-of-type(odd) {
+                background: var(--responsive-table-list-row-odd-bg-color, #ffffff);
+                border-left: var(--responsive-table-list-row-odd-border-left, none);
+                border-right: var(--responsive-table-list-ow-odd-border-right, none);
+                border-top: var(--responsive-table-list-row-odd-border-top, 1px none);
+                border-bottom: var(--responsive-table-list-row-odd-border-bottom, none);
+                font-size: var(--responsive-table-row-list-odd-font-size, 1rem);
+                font-family: var(--responsive-table-list-row-odd-font-family, sans-serif);
+                margin: var(--responsive-table-list-row-odd-margin, 0);
+                padding: var(--responsive-table-list-row-odd-padding, 0); }
+
+            .Table-row-item {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: row nowrap;
+                -ms-flex-flow: row nowrap;
+                flex-flow: row nowrap;
+                -webkit-flex-grow: 1;
+                -ms-flex-positive: 1;
+                flex-grow: 1;
+                -webkit-flex-basis: 0;
+                -ms-flex-preferred-size: 0;
+                flex-basis: 0;
+                word-break: break-word;
+                border: var(--responsive-table-list-row-border, 1px solid #ffffff);
+                padding: var(--responsive-table-list-row-padding, 0.5rem); }
+
+            .Table-row-item:before {
+                content: attr(data-header);
+                width: 35%;
+                font-weight: var(--responsive-table-list-header-font-weight, bold);
+                background: var(--responsive-table-list-header-bg-color, transparent); }
+
+            .table-no-mobile {
+                background: var(--responsive-table-grid-bg-color, transparent);
+                border-left: var(--responsive-table-grid-border-left, 1px solid #f2f2f2);
+                border-right: var(--responsive-table-grid-border-right, 1px solid #f2f2f2);
+                border-top: var(--responsive-table-grid-border-top, 1px solid #f2f2f2);
+                border-bottom: var(--responsive-table-grid-border-bottom, 1px solid #f2f2f2); }
+            .table-no-mobile .Table-row {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: row nowrap;
+                -ms-flex-flow: row nowrap;
+                flex-flow: row nowrap; }
+            .table-no-mobile .Table-row:nth-of-type(even) {
+                background: var(--responsive-table-grid-row-even-bg-color, #ffffff);
+                border-left: var(--responsive-table-grid-row-even-border-left, none);
+                border-right: var(--responsive-table-grid-row-even-border-right, none);
+                border-top: var(--responsive-table-row-grid-even-border-top, 1px none);
+                border-bottom: var(--responsive-table-grid-row-even-border-bottom, none);
+                font-size: var(--responsive-table-grid-row-even-font-size, 1rem);
+                font-family: var(--responsive-table-grid-row-even-font-family, sans-serif);
+                margin: var(--responsive-table-grid-row-even-margin, 0);
+                padding: var(--responsive-table-grid-row-even-padding, 0); }
+            .table-no-mobile .Table-row:nth-of-type(odd) {
+                background: var(--responsive-table-grid-row-odd-bg-color, #f2f2f2);
+                border-left: var(--responsive-table-grid-row-odd-border-left, none);
+                border-right: var(--responsive-table-grid-ow-odd-border-right, none);
+                border-top: var(--responsive-table-grid-row-odd-border-top, 1px none);
+                border-bottom: var(--responsive-table-grid-row-odd-border-bottom, none);
+                font-size: var(--responsive-table-row-grid-odd-font-size, 1rem);
+                font-family: var(--responsive-table-grid-row-odd-font-family, sans-serif);
+                margin: var(--responsive-table-grid-row-odd-margin, 0);
+                padding: var(--responsive-table-grid-row-odd-padding, 0); }
+            .table-no-mobile .Table-header:nth-of-type(odd) {
+                background: var(--responsive-table-grid-header-bg-color, #f2f2f2);
+                border-left: var(--responsive-table-grid-header-border-left, none);
+                border-right: var(--responsive-table-grid-header-border-right, none);
+                border-top: var(--responsive-table-grid-header-border-top, none);
+                border-bottom: var(--responsive-table-grid-header-border-bottom, none);
+                font-size: var(--responsive-table-grid-header-font-size, 1rem);
+                font-family: var(--responsive-table-grid-header-font-family, sans-serif);
+                font-weight: var(--responsive-table-grid-header-font-weight, bold);
+                margin: var(--responsive-table-grid-header-even-margin, 0);
+                padding: var(--responsive-table-grid-header-even-padding, 0); }
+            .table-no-mobile .Table-row-item {
+                border: var(--responsive-table-grid-row-border, 1px solid #ffffff);
+                padding: var(--responsive-table-grid-row-padding, 0.5rem); }
+            .table-no-mobile .Table-row-item:before {
+                content: none; }
+
+            /* Accordion Styling
+            ==================================== */
+            .Accordion {
+                cursor: pointer;
+                transition: background-color 0.1s;
+                width: 100%;
+                text-decoration: none;
+                text-align: left;
+                position: relative;
+                margin: 0 0 var(--responsive-table-list-margin-top, 0.5rem) 0;
+                background-color: var(--responsive-table-accordion-bg-color, #237ABA);
+                color: var(--responsive-table-accordion-color, white);
+                padding: var(--responsive-table-accordion-padding, 0.6em 0.6em 0.6em 2em);
+                border-top: var(--responsive-table-accordion-border-top, solid 3px #1464A5);
+                border-bottom: var(--responsive-table-accordion-border-bottom, solid 3px #1464A5);
+                border-left: var(--responsive-table-accordion-border-left, solid 3px #1464A5);
+                border-right: var(--responsive-table-accordion-border-right, solid 3px #1464A5);
+                border-radius: var(--responsive-table-accordion-border-radius, 0.5em);
+                font: var(--responsive-table-accordion-font, normal bolder 0.7rem sans-serif); }
+
+            .Accordion:hover,
+            .Accordion:focus {
+                outline: none;
+                -webkit-filter: contrast(150%);
+                filter: contrast(150%); }
+
+            .Accordion[aria-selected="true"] {
+                background-color: var(--responsive-table-accordion-selected-bg-color, var(--responsive-table-accordion-bg-color, #49A5E6));
+                color: var(--responsive-table-accordion-selected-color, var(--responsive-table-accordion-color, white));
+                padding: var(--responsive-table-accordion-selected-padding, var(--responsive-table-accordion-padding, 0.6em 0.6em 0.6em 2em));
+                border-top: var(--responsive-table-accordion-selected-border-top, var(--responsive-table-accordion-border-top, solid 3px #1464A5));
+                border-bottom: var(--responsive-table-accordion-selected-border-bottom, var(--responsive-table-accordion-border-bottom, solid 3px #1464A5));
+                border-left: var(--responsive-table-accordion-selected-border-left, var(--responsive-table-accordion-border-left, solid 3px #1464A5));
+                border-right: var(--responsive-table-accordion-selected-border-right, var(--responsive-table-accordion-border-right, solid 3px #1464A5));
+                border-radius: var(--responsive-table-accordion-selected-border-radius, var(--responsive-table-accordion-border-radius, 0.5em));
+                font: var(--responsive-table-accordion-selected-font, var(--responsive-table-accordion-font, normal bolder 0.7rem sans-serif)); }
+
+            .Accordion:before {
+                content: var(--responsive-table-accordion-toogle-opened, "+");
+                position: absolute;
+                top: 50%;
+                left: 0.3em;
+                margin-top: -0.75em;
+                font-weight: normal;
+                font-size: 1.5em;
+                line-height: 1.5em;
+                background-size: 2em 2em; }
+
+            .Accordion[aria-selected="true"]:before {
+                content: var(--responsive-table-accordion-toogle-closed, "-"); }
+
+        </style>
+
+        <div class$="Table [[style.tableClass]]" id="table">
+            <div class="Table-row Table-header">
+                <template is="dom-repeat"
+                          items="[[headers]]"
+                          as="header">
+                    <div class="Table-row-item">[[header]]</div>
+                </template>
+            </div>
+
+            <template is="dom-repeat"
+                      items="[[rows]]"
+                      as="row"
+                      index-as="rowIndex">
+                <button id$="row-[[rowIndex]]"
+                        class="Accordion"
+                        role="tab"
+                        aria-selected="false"
+                        on-click="onToggleColumn"
+                        hidden$="[[!isMobile]]">
+                    [[row.title]]
+                </button>
+                <div class="Table-row" data-row$="row-[[rowIndex]]" hidden>
+                    <template is="dom-repeat"
+                              items="[[row.cells]]"
+                              as="cell"
+                              index-as="cellIndex"
+                              on-dom-change="_toggleClass">
+                        <div  class="Table-row-item"
+                              data-header$="[[getHeaderName(cellIndex)]]">
+                            [[cell]]
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <script>
+        class ResponsiveTable extends Polymer.Element {
+            static get is() {
+                return 'responsive-table';
+            }
+
+            static get properties() {
+                return {
+                    headers: {
+                        type: Array,
+                        value: []
+                    },
+                    rows: {
+                        type: Array,
+                        value: []
+                    },
+                    isMobile: {
+                        type: Boolean,
+                        value: false
+                    },
+                    style: {
+                        type: Object,
+                        value: {}
+                    },
+                    limitResponsive: {
+                        type: Number,
+                        value: 500
+                    }
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+
+                window.addEventListener('resize', (event) => {
+                    this._responsive();
+                this._toggleClass();
+            });
+
+                this._responsive();
+                this._toggleClass();
+            }
+
+            getHeaderName(indexHeader) {
+                return this.headers[indexHeader];
+            }
+
+            toggleColumns(buttonSelected) {
+                const cells = buttonSelected.parentNode.querySelectorAll('.Table-row');
+                for (const cell of cells) {
+                    if (cell.getAttribute('data-row') === buttonSelected.getAttribute('id')) {
+                        if (buttonSelected.getAttribute('aria-selected') === 'true') {
+                            cell.hidden = false;
+                        } else {
+                            cell.hidden = true;
+                        }
+                    }
+                }
+            }
+
+            openColumns() {
+                const cells = this.$.table.querySelectorAll('.Table-row');
+                const buttons = this.$.table.querySelectorAll('.Accordion');
+                for (const cell of cells) {
+                    for (const button of buttons) {
+                        if (cell.getAttribute('data-row') === button.getAttribute('id')) {
+                            if (button.getAttribute('aria-selected') === 'true') {
+                                cell.hidden = false;
+                            } else {
+                                cell.hidden = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            resetToggleColumns() {
+                const cells = this.$.table.querySelectorAll('.Table-row');
+                for (const cell of cells) {
+                    cell.hidden = false;
+                }
+            }
+
+            onToggleColumn(event) {
+                const buttonSelected = event.currentTarget;
+                buttonSelected.setAttribute('aria-selected', buttonSelected.getAttribute('aria-selected') !== 'true');
+                this.toggleColumns(buttonSelected);
+            }
+
+            _responsive() {
+                if (this.$.table.clientWidth < this.limitResponsive) {
+                    this.set('isMobile', true);
+                } else {
+                    this.set('isMobile', false);
+                }
+            }
+
+            _toggleClass() {
+                if (this.isMobile === true) {
+                    this.set('style', {tableClass: ''});
+                    this.openColumns();
+                } else {
+                    this.set('style', {tableClass: 'table-no-mobile'});
+                    this.resetToggleColumns();
+                }
+            }
+        } customElements.define(ResponsiveTable.is, ResponsiveTable);
+    </script>
+</dom-module>
