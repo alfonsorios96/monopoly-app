@@ -117,12 +117,20 @@
                     },
                     player: {
                         type: Object,
-                        value: {},
-                        observer: '_handlerTable'
+                        value: {}
+                    },
+                    players: {
+                        type: Array,
+                        value: []
                     },
                     table: {
                         type: Object,
                         value: {}
+                    },
+                    transactions:{
+                        type: Object,
+                        value:{},
+                        observer: '_handlerTable'
                     }
                 };
             }
@@ -139,13 +147,28 @@
                 this.$.titlesButton.setAttribute('aria-expanded', this.$.deeds.opened);
             }
 
+            getUserName(uid) {
+                let playerName = '';
+                const players = this.players[0];
+                for (const uidPlayer in players) {
+                    if (uid === uidPlayer) {
+                        playerName = players[uid].name;
+                    }
+                }
+                return playerName;
+            }
+
             _handlerTable() {
-                const headers = ['Type', 'User', 'Amount', 'Date'];
+                const headers = ['Type', 'User', 'Value', 'Date'];
                 const rows = [];
-                for (const transaction in this.player.transactions) {
+
+                const players = this.players[0];
+
+
+                for (const transaction of this.transactions) {
                     const row = {
-                        title: transaction.time,
-                        cells: [transaction.type, transaction.player, transaction.amount, transaction.time]
+                        title: transaction.date,
+                        cells: [transaction.type, this.getUserName(transaction.from), transaction.value, transaction.date]
                     };
                     rows.push(row);
                 }
