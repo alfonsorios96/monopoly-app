@@ -206,7 +206,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             attr-for-selected="name"
                             fallback-selection="view404"
                             role="main">
-                        <my-view1 name="dashboard" deeds="[[deeds]]" player="[[player]]"></my-view1>
+                        <my-view1 name="dashboard" deeds="[[deeds]]" player="[[player]]" transactions="[[transactions]]" players="[[players]]"></my-view1>
                         <my-view2 name="transactions"></my-view2>
                         <my-view404 name="view404"></my-view404>
                     </iron-pages>
@@ -241,157 +241,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     rootPath: String,
                     deeds: {
                         type: Array,
-                        value: [
-                            {
-                                name: 'México',
-                                image: '../images/mx.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Estados Unidos',
-                                image: '../images/us.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Canadá',
-                                image: '../images/ca.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Argentina',
-                                image: '../images/ar.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Brazil',
-                                image: '../images/br.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Chile',
-                                image: '../images/cl.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Costa Rica',
-                                image: '../images/cr.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Guatemala',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Panamá',
-                                image: '../images/pa.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Colombia',
-                                image: '../images/pa.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Venezuela',
-                                image: '../images/ve.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Perú',
-                                image: '../images/pe.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'España',
-                                image: '../images/es.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Francia',
-                                image: '../images/fr.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Inglaterra',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Italia',
-                                image: '../images/it.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Suiza',
-                                image: '../images/ch.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Alemania',
-                                image: '../images/de.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Marruecos',
-                                image: '../images/ma.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Egipto',
-                                image: '../images/eg.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Sudáfrica',
-                                image: '../images/za.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Rusia',
-                                image: '../images/ru.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'China',
-                                image: '../images/cn.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Japón',
-                                image: '../images/jp.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Aerolínea Afroasiática',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Aerolínea Norteamericana',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Aerolínea Sudamericana',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Aerolínea Europea',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Embajada',
-                                image: '../images/.png',
-                                player: 'bank'
-                            },
-                            {
-                                name: 'Consulado',
-                                image: '../images/.png',
-                                player: 'bank'
-                            }]
+                        value: []
                     },
                     player: {
                         type: Object,
@@ -410,6 +260,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     players: {
                         type: Array,
                         value: []
+                    },
+                    transactions:{
+                        type:Object,
+                        value:{}
                     }
                 };
             }
@@ -425,6 +279,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 const players = database.ref('players/');
                 players.on('value', (snapshot) => {
                     this.push('players', snapshot.val());
+                });
+
+                const transactions = database.ref('transactions/');
+                transactions.on('value', (snapshot) => {
+                    const transactions = snapshot.val();
+                    this.set('transactions', transactions);
                 });
 
 
